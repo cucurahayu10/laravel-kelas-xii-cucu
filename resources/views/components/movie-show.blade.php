@@ -52,17 +52,23 @@
                     <table id="table-breakpoint">
                       <thead>
                         <tr>
-                        <th>Cast</th>
-                        <th>Peran</th>
+                          <th>Cast / Aktor</th>
+                          <th>Peran / Karakter</th>
                         </tr>
                       </thead>
                       <tbody>
-                        @foreach ($perans as $peran)
-                        <tr>
-                          <td class="w3-list-info">{{ $peran->cast_id }}</td>
-                          <td class="w3-list-info">{{ $peran->actor }}</td>
-                        </tr>
-                        @endforeach
+                        @forelse ($perans as $peran)
+                          <tr>
+                            <td class="w3-list-info">{{ $peran->cast->name ?? 'Cast tidak ditemukan' }}</td>
+                            <td class="w3-list-info">{{ $peran->actor ?: '-' }}</td>
+                          </tr>
+                        @empty
+                          <tr>
+                            <td colspan="2" class="text-center" style="padding: 20px; font-style: italic; color: #777;">
+                              Data cast belum tersedia
+                            </td>
+                          </tr>
+                        @endforelse
                       </tbody>
                     </table>
                   </div>
@@ -118,20 +124,29 @@
           <div class="all-comments-info">
             <a href="#">Comments</a>
             <div class="agile-info-wthree-box">
-              <form>
-                <input type="text" placeholder="Name" required="">			           					   
-                <input type="text" placeholder="Email" required="">
-                <input type="text" placeholder="Phone" required="">
-                <textarea placeholder="Message" required=""></textarea>
-                <input type="submit" value="SEND">
-                <div class="clearfix"> </div>
-              </form>
+              @auth
+                <form action="{{ route('comments.store', $film) }}" method="POST">
+                  @csrf
+                  <textarea name="comment" placeholder="Message" maxlength="500" required>{{ old('comment') }}</textarea>
+                  @error('comment')
+                    <div class="alert alert-danger">{{ $message }}</div>
+                  @enderror
+                  <input type="submit" value="SEND">
+                  <div class="clearfix"> </div>
+                </form>
+              @else
+                <p>Silakan login terlebih dahulu untuk berkomentar.</p>
+                <a class="btn btn-warning" href="{{ route('login', ['redirect' => route('movies.show', $film)]) }}">Login untuk berkomentar</a>
+              @endauth
             </div>
           </div>
           <div class="media-grids">
             @foreach ($comments as $comment)
               <div class="media">
-                <h5>{{ $comment->user_id }}</h5>
+                <h5>{{ $comment->user->name ?? 'Pengguna tidak dikenal' }}</h5>
+                @if ($comment->created_at)
+                  <small>{{ $comment->created_at->diffForHumans() }}</small>
+                @endif
                 <div class="media-left">
                   <a href="#">
                     <img src="{{ asset('storage/images/user.jpg') }}" title="One movies" alt=" " />

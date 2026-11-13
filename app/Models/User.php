@@ -20,6 +20,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'role_id',
+        'profile_id',
     ];
 
     /**
@@ -43,5 +46,25 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin' || $this->role_id === 2;
+    }
+
+    public function profile()
+    {
+        return $this->belongsTo(Profile::class);
+    }
+
+    public function roleModel()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    public function kritiks()
+    {
+        return $this->hasMany(Kritik::class);
     }
 }

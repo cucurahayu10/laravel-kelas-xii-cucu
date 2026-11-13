@@ -28,10 +28,11 @@ composer install
 ```bash
 php artisan key:generate
 ```
-7. Migration & Seeder
+7. Jalankan migration dan seeder
 ```bash
-php artisan migrate -s
+php artisan migrate --seed
 ```
+Seeder membuat akun administrator awal: `admin@example.com` dengan password `12345678`. Ganti password tersebut setelah login pertama.
 8. copy folder image yang ada pada folder public ke dalam folder storage/app
 9. Buat symlink untuk storage
 ```bash

@@ -8,6 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class Cast extends Model
 {
     use HasFactory;
+
     protected $table = 'casts';
-    protected $fillable = ['name','age', 'bio'];
+    protected $fillable = ['name', 'age', 'bio'];
+
+    public function perans()
+    {
+        return $this->hasMany(Peran::class);
+    }
+
+    public function films()
+    {
+        return $this->belongsToMany(Film::class, 'perans', 'cast_id', 'film_id')
+            ->withPivot('id', 'actor')
+            ->withTimestamps();
+    }
 }
